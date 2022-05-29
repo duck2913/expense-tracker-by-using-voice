@@ -1,7 +1,8 @@
 import React from "react";
 import { Grid } from "@material-ui/core";
 import Detail from "./components/Detail/Detail";
-import useStyle from "./styles";
+import useStyle from "./appStyles";
+import Main from "./components/Main/Main";
 
 function App() {
 	const classes = useStyle();
@@ -18,8 +19,8 @@ function App() {
 				<Grid item xs={12} sm={4}>
 					<Detail title="Income" />
 				</Grid>
-				<Grid item xs={12} sm={4}>
-					Main
+				<Grid item xs={12} sm={3}>
+					<Main />
 				</Grid>
 				<Grid item xs={12} sm={4}>
 					<Detail title="Expense" />
