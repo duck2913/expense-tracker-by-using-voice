@@ -2,12 +2,13 @@ import React from "react";
 import useStyle from "./mainStyles";
 import { Card, CardHeader, CardContent, Grid, Divider, Typography } from "@material-ui/core";
 import Form from "./Form/Form";
+import List from "./List/List";
 
 const Main = () => {
 	const classes = useStyle();
 
 	return (
-		<Card className={classes.grid}>
+		<Card className={classes.root}>
 			<CardHeader title="Expense tracker" subheader="Powered by Speechly" />
 			<Typography align="center" variant="h5">
 				$100
@@ -19,7 +20,9 @@ const Main = () => {
 			<Form />
 			<CardContent className={classes.cardContent}>
 				<Grid container spacing={2}>
-					<Grid item xs={12}></Grid>
+					<Grid item xs={12}>
+						<List />
+					</Grid>
 				</Grid>
 			</CardContent>
 		</Card>
