@@ -1,5 +1,6 @@
 import React from "react";
 import { createContext, useReducer } from "react";
+import { v4 as uuid } from "uuid";
 
 const initialState = [
 	{ id: 1, type: "Income", category: "business", amount: 100, date: "10/10/2001" },
@@ -16,7 +17,7 @@ export const ExpenseTrackerContext = createContext({
 function reducer(state, action) {
 	switch (action.type) {
 		case "ADD":
-			return state.concat(action.payload);
+			return state.concat({ ...action.payload, id: uuid() });
 		case "DELETE":
 			return state.filter((transaction) => transaction.id !== action.payload);
 		default:

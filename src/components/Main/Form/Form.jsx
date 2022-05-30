@@ -16,8 +16,8 @@ import { ExpenseTrackerContext } from "../../../context/Context";
 const initialState = {
 	amount: 0,
 	type: "Income",
-	date: new Date(),
-	category: "",
+	date: Date.now(),
+	category: "business",
 };
 
 const Form = () => {
@@ -25,7 +25,9 @@ const Form = () => {
 	const [formData, setFormData] = useState(initialState);
 	const classes = useStyles();
 
-	function addTransactionHandler() {}
+	function addTransactionHandler() {
+		addTransaction(formData);
+	}
 
 	return (
 		<Grid container spacing={2}>
@@ -65,6 +67,8 @@ const Form = () => {
 					>
 						<MenuItem value="business">Business</MenuItem>
 						<MenuItem value="salary">Salary</MenuItem>
+						<MenuItem value="education">Education</MenuItem>
+						<MenuItem value="entertainment">Entertainment</MenuItem>
 					</Select>
 				</FormControl>
 			</Grid>
@@ -75,7 +79,7 @@ const Form = () => {
 					fullWidth
 					value={formData.amount}
 					onChange={(e) => {
-						setFormData((formData) => ({ ...formData, amount: e.target.value }));
+						setFormData({ ...formData, amount: +e.target.value });
 					}}
 				/>
 			</Grid>
