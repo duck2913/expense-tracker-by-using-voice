@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Card, CardHeader, CardContent, Typography } from "@material-ui/core";
 import { Doughnut } from "react-chartjs-2";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
@@ -8,6 +8,8 @@ import useTransactions from "../../hooks/useTransactions";
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 const Detail = ({ title }) => {
+	const [balance, setBalance] = useState(0);
+
 	const classes = useStyle();
 	const [data, total] = useTransactions(title);
 	const chartData = {

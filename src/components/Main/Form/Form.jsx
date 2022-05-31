@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import {
 	TextField,
 	Typography,
@@ -21,7 +21,7 @@ const initialState = {
 	amount: 0,
 	type: "Income",
 	date: formatDate(new Date()),
-	category: "business",
+	category: "",
 };
 
 const Form = () => {
@@ -30,46 +30,58 @@ const Form = () => {
 	const classes = useStyles();
 	const { segment } = useSpeechContext();
 
-	function createTransaction() {}
+	const addTransactionHandler = useCallback(() => {
+		addTransaction(formData);
+		setFormData(initialState);
+	}, [formData, addTransaction]);
 
 	useEffect(() => {
 		if (!segment) return;
 		console.log(segment.intent.intent);
 		if (segment.intent.intent === "add_expense") {
-			console.log("type change to expense");
 			setFormData({ ...formData, type: "Expense" });
 		}
 		if (segment.intent.intent === "add_income") {
-			console.log("type change to income");
 			setFormData({ ...formData, type: "Income" });
 		}
-		if (segment.intent.intent === "create_transaction" && segment.isFinal) createTransaction();
-		if (segment.intent.intent === "cancel_transaction" && segment.isFinal)
-			setFormData(initialState);
+
 		//
 		segment.entities.forEach((entity) => {
 			switch (entity.type) {
 				case "amount":
-					setFormData({ ...formData, amount: entity.value });
+					setFormData({ ...formData, amount: Number(entity.value) });
 					break;
 				case "category":
 					const category = `${entity.value.charAt(0)}${entity.value
 						.slice(1)
 						.toLowerCase()}`;
-					setFormData({ ...formData, category });
+					//check if the category is belongs to the incomeCategories and expenseCategories
+					if (
+						(formData.type === "Income" &&
+							incomeCategories.find((ic) => ic.type === category)) ||
+						(formData.type === "Expense" &&
+							expenseCategories.find((ec) => ec.type === category))
+					)
+						setFormData({ ...formData, category });
 					break;
 				case "date":
-					setFormData({ ...formData, date: entity.value });
+					setFormData({ ...formData, date: formatDate(entity.value) });
 					break;
 				default:
 					break;
 			}
 		});
+		if (
+			segment.isFinal &&
+			formData.amount &&
+			formData.category &&
+			formData.date &&
+			formData.type
+		)
+			addTransactionHandler();
+		if (segment.intent.intent === "cancel_transaction" && segment.isFinal)
+			setFormData(initialState);
 	}, [segment]);
-
-	function addTransactionHandler() {
-		addTransaction(formData);
-	}
 
 	return (
 		<Grid container spacing={2}>
@@ -129,7 +141,7 @@ const Form = () => {
 					fullWidth
 					value={formData.amount}
 					onChange={(e) => {
-						setFormData({ ...formData, amount: +e.target.value });
+						setFormData({ ...formData, amount: Number(e.target.value) });
 					}}
 				/>
 			</Grid>

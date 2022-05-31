@@ -1,5 +1,5 @@
-import React from "react";
-import { createContext, useReducer } from "react";
+import React, { useEffect } from "react";
+import { createContext, useReducer, useCallback, useState } from "react";
 import { v4 as uuid } from "uuid";
 
 const initialState = [
@@ -13,6 +13,7 @@ export const ExpenseTrackerContext = createContext({
 	transactions: [],
 	deleteTransaction: (id) => {},
 	addTransaction: (transaction) => {},
+	balance: 0,
 });
 
 function reducer(state, action) {
@@ -28,19 +29,31 @@ function reducer(state, action) {
 
 const ContextProvider = ({ children }) => {
 	const [transactions, dispatch] = useReducer(reducer, initialState);
-
+	const [balance, setBalance] = useState(0);
 	//ACTION CREATOR
 	function deleteTransaction(id) {
 		dispatch({ type: "DELETE", payload: id });
 	}
-	function addTransaction(transaction) {
+	const addTransaction = useCallback((transaction) => {
 		dispatch({ type: "ADD", payload: transaction });
-	}
+	}, []);
+
+	useEffect(() => {
+		const result = transactions.reduce(
+			(balance, currTransaction) =>
+				currTransaction.type === "Income"
+					? balance + currTransaction.amount
+					: balance - currTransaction.amount,
+			0,
+		);
+		setBalance(result);
+	}, [transactions]);
 
 	const ctx = {
 		transactions,
 		deleteTransaction,
 		addTransaction,
+		balance,
 	};
 	return <ExpenseTrackerContext.Provider value={ctx}>{children}</ExpenseTrackerContext.Provider>;
 };
