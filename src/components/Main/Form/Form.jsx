@@ -14,6 +14,8 @@ import { useContext } from "react";
 import { ExpenseTrackerContext } from "../../../context/Context";
 import { expenseCategories, incomeCategories } from "../../../constants/categories";
 import formatDate from "../../../utils/formatDates";
+import { useSpeechContext } from "@speechly/react-client/dist/hooks";
+import { useEffect } from "react";
 
 const initialState = {
 	amount: 0,
@@ -26,6 +28,44 @@ const Form = () => {
 	const { addTransaction } = useContext(ExpenseTrackerContext);
 	const [formData, setFormData] = useState(initialState);
 	const classes = useStyles();
+	const { segment } = useSpeechContext();
+
+	function createTransaction() {}
+
+	useEffect(() => {
+		if (!segment) return;
+		console.log(segment.intent.intent);
+		if (segment.intent.intent === "add_expense") {
+			console.log("type change to expense");
+			setFormData({ ...formData, type: "Expense" });
+		}
+		if (segment.intent.intent === "add_income") {
+			console.log("type change to income");
+			setFormData({ ...formData, type: "Income" });
+		}
+		if (segment.intent.intent === "create_transaction" && segment.isFinal) createTransaction();
+		if (segment.intent.intent === "cancel_transaction" && segment.isFinal)
+			setFormData(initialState);
+		//
+		segment.entities.forEach((entity) => {
+			switch (entity.type) {
+				case "amount":
+					setFormData({ ...formData, amount: entity.value });
+					break;
+				case "category":
+					const category = `${entity.value.charAt(0)}${entity.value
+						.slice(1)
+						.toLowerCase()}`;
+					setFormData({ ...formData, category });
+					break;
+				case "date":
+					setFormData({ ...formData, date: entity.value });
+					break;
+				default:
+					break;
+			}
+		});
+	}, [segment]);
 
 	function addTransactionHandler() {
 		addTransaction(formData);
@@ -35,7 +75,7 @@ const Form = () => {
 		<Grid container spacing={2}>
 			<Grid item xs={12}>
 				<Typography align="center" variant="subtitle2" gutterBottom>
-					...
+					{segment && <>{segment.words.map((word) => word.value).join(" ")}</>}
 				</Typography>
 			</Grid>
 			<Grid item xs={6}>

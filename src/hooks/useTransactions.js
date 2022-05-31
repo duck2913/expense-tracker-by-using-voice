@@ -1,6 +1,6 @@
 import { useContext } from "react";
 import { ExpenseTrackerContext } from "../context/Context";
-import { expenseCategories, incomeCategories, resetCategories } from "../constants/categories";
+import { expenseCategories, incomeCategories } from "../constants/categories";
 
 const useTransactions = (type) => {
 	const { transactions } = useContext(ExpenseTrackerContext);
@@ -11,14 +11,13 @@ const useTransactions = (type) => {
 		(total, transaction) => total + transaction.amount,
 		0,
 	);
-	const sumByCategory = {};
+	const transactionsPerCategory = {};
 	selectedTypeTransactions.forEach((transaction) => {
-		if (sumByCategory[transaction.category]) {
-			sumByCategory[transaction.category].amount += transaction.amount;
+		const category = transaction.category;
+		if (transactionsPerCategory[category]) {
+			transactionsPerCategory[category].amount += transaction.amount;
 		} else {
-			const category = transaction.category;
-
-			sumByCategory[category] = {
+			transactionsPerCategory[category] = {
 				amount: transaction.amount,
 				color:
 					type === "Income"
@@ -31,6 +30,6 @@ const useTransactions = (type) => {
 			};
 		}
 	});
-	return [sumByCategory, total];
+	return [transactionsPerCategory, total];
 };
 export default useTransactions;

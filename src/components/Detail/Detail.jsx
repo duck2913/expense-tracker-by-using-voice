@@ -9,28 +9,14 @@ ChartJS.register(ArcElement, Tooltip, Legend);
 
 const Detail = ({ title }) => {
 	const classes = useStyle();
-	const [incomeData, incomeTotal] = useTransactions("Income");
-	const incomeChartData = {
-		labels: Object.keys(incomeData),
+	const [data, total] = useTransactions(title);
+	const chartData = {
+		labels: Object.keys(data),
 		datasets: [
 			{
 				label: "# of Votes",
-				data: Object.values(incomeData).map((obj) => obj.amount),
-				backgroundColor: Object.values(incomeData).map((obj) => obj.color),
-				borderWidth: 1,
-			},
-		],
-	};
-
-	const [expenseData, expenseTotal] = useTransactions("Expense");
-	const expenseChartData = {
-		labels: Object.keys(expenseData),
-		datasets: [
-			{
-				label: "# of Votes",
-				data: Object.values(expenseData).map((obj) => obj.amount),
-				backgroundColor: Object.values(expenseData).map((obj) => obj.color),
-				borderWidth: 1,
+				data: Object.values(data).map((obj) => obj.amount),
+				backgroundColor: Object.values(data).map((obj) => obj.color),
 			},
 		],
 	};
@@ -39,14 +25,8 @@ const Detail = ({ title }) => {
 		<Card className={title === "Income" ? classes.income : classes.expense}>
 			<CardHeader title={title} />
 			<CardContent>
-				<Typography variant="h5">
-					{title === "Income" ? `$${incomeTotal}` : `$${expenseTotal}`}
-				</Typography>
-				{title === "Income" ? (
-					<Doughnut data={incomeChartData} />
-				) : (
-					<Doughnut data={expenseChartData} />
-				)}
+				<Typography variant="h5">{`$${total}`}</Typography>
+				<Doughnut data={chartData} />
 			</CardContent>
 		</Card>
 	);
