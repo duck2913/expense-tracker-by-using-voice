@@ -3,9 +3,10 @@ import { createContext, useReducer } from "react";
 import { v4 as uuid } from "uuid";
 
 const initialState = [
-	{ id: 1, type: "Income", category: "business", amount: 100, date: "10/10/2001" },
-	{ id: 2, type: "Income", category: "education", amount: 200, date: "10/10/2001" },
-	{ id: 3, type: "Expense", category: "entertainment", amount: 50, date: "10/10/2001" },
+	{ id: 1, type: "Expense", category: "Bills", amount: 100, date: "10/10/2001" },
+	{ id: 2, type: "Income", category: "Investments", amount: 200, date: "10/10/2001" },
+	{ id: 3, type: "Income", category: "Salary", amount: 50, date: "10/10/2001" },
+	{ id: 4, type: "Expense", category: "Clothes", amount: 20, date: "10/10/2001" },
 ];
 
 export const ExpenseTrackerContext = createContext({
