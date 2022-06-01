@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { createContext, useReducer, useCallback, useState } from "react";
 import { v4 as uuid } from "uuid";
 
-const initialState = [
+const initialState = JSON.parse(localStorage.getItem("transactions")) || [
 	{ id: 1, type: "Expense", category: "Bills", amount: 100, date: "10/10/2001" },
 	{ id: 2, type: "Income", category: "Investments", amount: 200, date: "10/10/2001" },
 	{ id: 3, type: "Income", category: "Salary", amount: 50, date: "10/10/2001" },
@@ -17,11 +17,16 @@ export const ExpenseTrackerContext = createContext({
 });
 
 function reducer(state, action) {
+	let transactions;
 	switch (action.type) {
 		case "ADD":
-			return state.concat({ ...action.payload, id: uuid() });
+			transactions = state.concat({ ...action.payload, id: uuid() });
+			localStorage.setItem("transactions", JSON.stringify(transactions));
+			return transactions;
 		case "DELETE":
-			return state.filter((transaction) => transaction.id !== action.payload);
+			transactions = state.filter((transaction) => transaction.id !== action.payload);
+			localStorage.setItem("transactions", JSON.stringify(transactions));
+			return transactions;
 		default:
 			throw new Error();
 	}
@@ -38,6 +43,7 @@ const ContextProvider = ({ children }) => {
 		dispatch({ type: "ADD", payload: transaction });
 	}, []);
 
+	// update the total balance
 	useEffect(() => {
 		const result = transactions.reduce(
 			(balance, currTransaction) =>

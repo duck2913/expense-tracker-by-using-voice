@@ -5,6 +5,7 @@ import Form from "./Form/Form";
 import List from "./List/List";
 import { useContext } from "react";
 import { ExpenseTrackerContext } from "../../context/Context";
+import InfoCard from "./InfoCard";
 
 const Main = () => {
 	const { balance } = useContext(ExpenseTrackerContext);
@@ -14,10 +15,10 @@ const Main = () => {
 		<Card className={classes.root}>
 			<CardHeader title="Expense tracker" subheader="Powered by Speechly" />
 			<Typography align="center" variant="h5">
-				{`$${balance}`}
+				{`Total balance: $${balance}`}
 			</Typography>
 			<Typography variant="subtitle1" style={{ lineHeight: "1.5rem", marginTop: "20px" }}>
-				Try saying: Add income for $100 in category Salary for the next Monday ...
+				<InfoCard />
 			</Typography>
 			<Divider />
 			<Form />

@@ -16,6 +16,7 @@ import { expenseCategories, incomeCategories } from "../../../constants/categori
 import formatDate from "../../../utils/formatDates";
 import { useSpeechContext } from "@speechly/react-client/dist/hooks";
 import { useEffect } from "react";
+import CustomSnackBar from "../../Snackbar/Snackbar";
 
 const initialState = {
 	amount: 0,
@@ -29,12 +30,15 @@ const Form = () => {
 	const [formData, setFormData] = useState(initialState);
 	const classes = useStyles();
 	const { segment } = useSpeechContext();
+	const [open, setOpen] = useState(false);
 
 	const addTransactionHandler = useCallback(() => {
 		addTransaction(formData);
 		setFormData(initialState);
+		setOpen(true);
 	}, [formData, addTransaction]);
 
+	//using speechly
 	useEffect(() => {
 		if (!segment) return;
 		console.log(segment.intent.intent);
@@ -85,6 +89,7 @@ const Form = () => {
 
 	return (
 		<Grid container spacing={2}>
+			<CustomSnackBar open={open} setOpen={setOpen} />
 			<Grid item xs={12}>
 				<Typography align="center" variant="subtitle2" gutterBottom>
 					{segment && <>{segment.words.map((word) => word.value).join(" ")}</>}
